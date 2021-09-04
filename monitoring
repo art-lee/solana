@@ -1,0 +1,137 @@
+23. Мониторинг metrics.stakeconomy.com
+
+24. Пишем сервис
+cat <<EOF | sudo tee /etc/apt/sources.list.d/influxdata.list
+deb https://repos.influxdata.com/ubuntu bionic stable
+EOF
+
+25. Добавляем ключ
+sudo curl -sL https://repos.influxdata.com/influxdb.key | sudo apt-key add -
+
+26. Устанавливаем telegraf 
+sudo apt-get update
+sudo apt-get -y install telegraf jq bc
+
+27. Добавляем пользователя и права ему
+sudo adduser telegraf sudo
+sudo adduser telegraf adm
+sudo -- bash -c 'echo "telegraf ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers'
+
+28.
+sudo cp /etc/telegraf/telegraf.conf /etc/telegraf/telegraf.conf.orig
+sudo rm -rf /etc/telegraf/telegraf.conf
+
+29. 
+git clone https://github.com/stakeconomy/solanamonitoring/
+cd solanamonitoring
+chmod +x monitor.sh
+
+30. Редактируем конфиг
+nano /etc/telegraf/telegraf.conf
+
+31. 
+#Поменять hostname 
+
+# Global Agent Configuration
+[agent]
+  hostname = "art0055-testnet" # set this to a name you want to identify your node in the grafana dashboard
+  flush_interval = "15s"
+  interval = "15s"
+
+# Input Plugins
+[[inputs.cpu]]
+    percpu = true
+    totalcpu = true
+    collect_cpu_time = false
+    report_active = false
+[[inputs.disk]]
+    ignore_fs = ["devtmpfs", "devfs"]
+[[inputs.io]]
+[[inputs.mem]]
+[[inputs.net]]
+[[inputs.system]]
+[[inputs.swap]]
+[[inputs.netstat]]
+[[inputs.processes]]
+[[inputs.kernel]]
+[[inputs.diskio]]
+
+# Output Plugin InfluxDB
+[[outputs.influxdb]]
+  database = "metricsdb"
+  urls = [ "http://metrics.stakeconomy.com:8086" ] # keep this to send all your metrics to the community dashboard otherwise use http://yourownmonitoringnode:8086
+  username = "metrics" # keep both values if you use the community dashboard
+  password = "password"
+
+[[inputs.exec]]
+  commands = ["sudo su -c /root/solana/solanamonitoring/monitor.sh -s /bin/bash root"] # change home and username to the useraccount your validator runs at
+  interval = "5m"
+  timeout = "1m"
+  data_format = "influx"
+  data_type = "integer"
+
+32. Стартуем мониторинг
+sudo systemctl enable --now telegraf
+sudo systemctl is-enabled telegraf
+systemctl restart telegraf
+systemctl status telegraf
+
+33. Мониторинг 2 (solana-mission-control)
+ссылки:
+https://github.com/Chainflow/solana-mission-control
+https://chainflow.io/introducing-solana-mission-control/
+
+34.
+curl -s -L https://raw.githubusercontent.com/Chainflow/solana-mission-control/main/scripts/install_script.sh | bash
+
+35. 
+source ~/.bashrc
+
+36. не получается прописать символические ссылки
+
+symlink /etc/systemd/system/multi-user.target.wants/prometheus.service → /lib/systemd/system/prometheus.service
+symlink /etc/systemd/system/multi-user.target.wants/node_exporter.service → /lib/systemd/system/node_exporter.service
+
+systemctl stop node_exporter
+systemctl stop prometheus
+
+ln -s /etc/systemd/system/multi-user.target.wants/prometheus.service /lib/systemd/system/prometheus.service
+ln -s /etc/systemd/system/multi-user.target.wants/node_exporter.service /lib/systemd/system/node_exporter.service
+
+systemctl restart node_exporter
+systemctl restart prometheus
+
+37. Экспортируем переменные
+
+cd $HOME
+#заменить все значения (см в solana.service):
+export RPC_ENDPOINT="https://api.testnet.solana.com" # Ex - export RPC_ENDPOINT="https://api.rpc.solana.com"
+export NETWORK_RPC="http://localhost:8899" # Ex - export NETWORK_RPC="https://api.rpc.com"
+export VALIDATOR_NAME="art0055" # Your validator name
+export PUB_KEY="GZA4y8zY8SZe85tDGb8dhXqyuEvdkdatBF3ivoce2sir"  # Ex - export PUB_KEY="valmmK7i1AxXeiTtQgQZhQNiXYU84ULeaYF1EH1pa"
+export VOTE_KEY="B1EmoN7nfcq4Mm8hEwyfLahbADUszieb2ctj6MisB21f" # Ex - export VOTE_KEY="2oxQJ1qpgUZU9JU84BHaoM1GzHkYfRDgDQY9dpH5mghh"
+export TELEGRAM_CHAT_ID=3593697 # Ex - export TELEGRAM_CHAT_ID=22128812
+export TELEGRAM_BOT_TOKEN="1995464693:AAFO5tk3YG4r1G_mM5UdBHJ-Xc3nnMEVpvg" # Ex - TELEGRAM_BOT_TOKEN="1117273891:AAE12xZU5x4JRj5YSF5LBeu1fPF0T4xj-UI"
+
+38.
+curl -s -L https://raw.githubusercontent.com/Chainflow/solana-mission-control/main/scripts/tool_installation.sh | bash
+
+39. смотрим логи
+journalctl -u solana_mc.service
+
+40. Заходим в grafana
+http://<your_ip>:3000
+admin
+admin
+
+41. Добавить datasources
+- Configuration and select Data Sources
+- Click on Add data source and select Prometheus.
+- Replace the URL with http://localhost:9090.
+- Click on Save & Test .
+
+42. Добавляем мониторы
+- + затем Import
+- 14738 - Validator monitoring metrics dashboard.
+- 14739 - Summary dashboard.
+- 13445 - System monitoring metrics dashboard.
