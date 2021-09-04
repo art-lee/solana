@@ -1,0 +1,177 @@
+1. Установка Solana Tools / cli (сверить версию: https://docs.solana.com/cli/install-solana-cli-tools)
+sh -c "$(curl -sSfL https://release.solana.com/v1.7.8/install)"
+
+2. Validator
+Офф инструкция тут: https://docs.solana.com/running-validator/validator-start
+
+3. Ставим кластер (testnet и mainnet)
+solana config set --url http://testnet.solana.com
+или
+solana config set --url https://api.mainnet-beta.solana.com
+
+4. Тюним линукс
+sudo bash -c "cat >/etc/sysctl.d/20-solana-udp-buffers.conf <<EOF
+# Increase UDP buffer size
+net.core.rmem_default = 134217728
+net.core.rmem_max = 134217728
+net.core.wmem_default = 134217728
+net.core.wmem_max = 134217728
+EOF"
+
+4.1.
+sudo sysctl -p /etc/sysctl.d/20-solana-udp-buffers.conf
+
+5. Еще один сервисник
+sudo bash -c "cat >/etc/security/limits.d/90-solana-nofiles.conf <<EOF
+# Increase process file descriptor count limit
+* - nofile 700000
+EOF"
+
+6. Создаем папку солана и переходим в нее
+mkdir solana
+cd solana
+
+7. Необходимо закинуть в папку ключи
+validator-keypair
+vote-account-keypair
+
+7.1.Восстановить json из seed-phrase:
+solana-keygen recover -o ~/solana/name1.json
+
+8. Ставим ключ по умолчанию
+solana config set --keypair ~/solana/validator-keypair.json
+
+9. Ключ валидатоора
+
+10. Создаем vote-account-keypair
+solana-keygen new -o ~/solana/vote-account-keypair.json
+
+11. Связываем validator-keypair.json + vote-account-keypair.json
+solana create-vote-account vote-account-keypair.json validator-keypair.json
+
+12. Создаем сервис
+nano solana.service
+
+#snapshot-interval-slots 500 \ (в майнете поставить 200-250)
+#maximum-local-snapshot-age 500 \ (в майнете поставить 200-250)
+#entrypoint сменить
+#trusted-validator валидаторов сменить
+#смотреть тут: https://docs.solana.com/clusters
+
+
+[Unit]
+Description=Solana TdS node
+After=network.target syslog.target
+StartLimitIntervalSec=0
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+LimitNOFILE=1024000
+Environment="SOLANA_METRICS_CONFIG=host=https://metrics.solana.com:8086,db=tds,u=testnet_write,p=c4fa841aa918bf8274e3e2a44d77568d9861b3ea"
+ExecStart=/root/.local/share/solana/install/active_release/bin/solana-validator \
+--entrypoint entrypoint.testnet.solana.com:8001 \
+--entrypoint entrypoint2.testnet.solana.com:8001 \
+--entrypoint entrypoint3.testnet.solana.com:8001 \
+--trusted-validator 5D1fNXzvv5NjV1ysLjirC4WY92RNsVH18vjmcszZd8on \
+--trusted-validator 7XSY3MrYnK8vq693Rju17bbPkCN3Z7KvvfvJx4kdrsSY \
+--trusted-validator Ft5fbkqNa76vnsjYNwjDZUXoTWpP7VYm3mtsaQckQADN \
+--trusted-validator 9QxCLckBiJc783jnMvXZubK4wH86Eqqvashtrwvcsgkv \
+--expected-genesis-hash 4uhcVJyU9pJkvQyS88uRDiswHXSCkY3zQawwpjk2NsNY \
+--no-untrusted-rpc \
+--wal-recovery-mode skip_any_corrupted_record \
+--identity /root/solana/validator-keypair.json \
+--vote-account /root/solana/vote-account-keypair.json \
+--ledger /root/solana/ledger \
+--accounts /mnt/ramdisk/accounts \
+--limit-ledger-size 50000000 \
+--dynamic-port-range 8000-8010 \
+--log /root/solana/solana.log \
+--snapshot-interval-slots 500 \
+--maximum-local-snapshot-age 500 \
+--snapshot-compression none \
+--no-port-check \
+--rpc-bind-address 127.0.0.1 \
+--rpc-port 8899
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s QUIT $MAINPID
+[Install]
+WantedBy=multi-user.target
+
+13. Создаем lofrotate
+nano solana.logrotate
+
+/root/solana/solana.log {
+  rotate 7
+  daily
+  missingok
+  postrotate
+    systemctl kill -s USR1 solana.service
+  endscript
+}
+
+
+14. Прописываем символические ссылки для сервис файлов
+ln -s /root/solana/solana.service /etc/systemd/system
+ln -s /root/solana/solana.logrotate /etc/logrotate.d/
+
+15. Создаем solana-sys-tuner в папке system
+cd ..
+cd etc/systemd/system
+
+16. Создаем сервис файл
+nano solana-sys-tuner.service
+
+[Unit]
+Description=Solana sys-tuner
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+ExecStart=/root/.local/share/solana/install/active_release/bin/solana-sys-tuner --user root
+
+[Install]
+WantedBy=multi-user.target
+==
+
+17. Перезагружаем
+systemctl daemon-reload
+systemctl enable solana-sys-tuner.service
+systemctl enable solana.service
+systemctl restart solana-sys-tuner.service
+systemctl restart solana.service
+
+18. Создаем Ramdisk
+swapoff -a
+dd if=/dev/zero of=/swapfile bs=1G count=128
+chmod 600 /swapfile
+mkswap /swapfile
+swapon /swapfile
+
+19. Редактируем
+nano /etc/fstab
+
+Добавляем
+/swapfile none swap sw 0 0
+
+Сохраняем. Добавляем
+tmpfs /mnt/ramdisk tmpfs nodev,nosuid,noexec,nodiratime,size=200G 0 0
+
+20. Создаем папку
+mkdir -p /mnt/ramdisk
+
+21. Моунтим папку
+mount /mnt/ramdisk
+
+22. Добавляем в solana.service
+nano solana.service
+Добавляем:
+--accounts /mnt/ramdisk/accounts
+
+23. Перегружаем демона
+systemctl daemon-reload
+systemctl restart solana-sys-tuner.service
+systemctl restart solana.service
