@@ -1,0 +1,48 @@
+Хорошая инструкция и команды:
+https://docs.google.com/document/d/1RZ-33RpapUGzge1rHWNyBx8GBIihZ3CzpJ0hJjnXrZU/mobilebasic
+
+1. Вывод с vote-account-keypair.json на validator-keypair.json
+solana withdraw-from-vote-account -u testnet ~/solana/vote-account-keypair.json ~/solana/validator-keypair.json 11 --authorized-withdrawer ~/solana/vote-account-keypair.json
+
+2. Вывод с vote-account-keypair.json на конкретный адрес
+solana -ut withdraw-from-vote-account -u testnet ~/solana/vote-account-keypair.json 6U6befpkTqT1gV18TaM3Lzuai3XQypHcAamK463DYXm4 250
+
+3. Создаем ключ validator-stake-keypair.json
+solana-keygen new -o ~/solana/validator-stake-keypair.json
+
+4. Создаем стейк-аккаунт
+solana create-stake-account ~/solana/validator-stake-keypair.json 17
+
+5. Делегировать на vote-account-keypair
+solana delegate-stake ~/solana/validator-stake-keypair.json ~/solana/vote-account-keypair.json
+
+
+
+===
+
+2. Проверка оборудования - диски
+curl -sL yabs.sh | bash -s --  -ig
+
+3. Проверка оборудования - сеть
+curl -sL yabs.sh | bash -s --  -dg
+
+4. Проверка mvne дисков
+apt install smartmontools
+sudo smartctl -a /dev/nvme0n1
+
+5. Проверить стейк на акк
+solana stakes ~/solana/vote-account-keypair.json
+
+6. % скипа (подробно)
+solana -v block-production | grep GZA4y
+solana -v block-production | grep 6U6be
+
+% скипа (кратко)
+solana block-production | grep GZA4y
+solana block-production | grep 6U6be
+
+Реварды 10 эпох:
+solana vote-account -u testnet ~/solana/vote-account-keypair.json --with-rewards --num-rewards-epochs 10
+
+% комиссии валидатора
+solana vote-update-commission vote-account-keypair.json 99 validator-keypair.json
