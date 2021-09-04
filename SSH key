@@ -1,0 +1,27 @@
+1. Переходим в папку .ssh
+cd .ssh/
+
+2. Содаем authorized_keys
+nano authorized_keys
+
+3. Даем права 
+chmod -R go= ~/.ssh
+
+4. Загрузить на удаленный сервер паб-кей 
+cat ~/.ssh/id_rsa.pub | ssh username@remote_host "mkdir -p ~/.ssh && touch ~/.ssh/authorized_keys && chmod -R go= ~/.ssh && cat >> ~/.ssh/authorized_keys"
+
+5. Проверить доступ по ssh key
+
+6. Удаляем доступ по паролю
+
+7. Открываем sshd_config
+sudo nano /etc/ssh/sshd_config
+
+8. Ищем строчку, раскоментируем и no
+PasswordAuthentication no
+
+9. Перезагружаем
+sudo systemctl restart ssh
+
+====
+Инструкция: https://www.digitalocean.com/community/tutorials/how-to-set-up-ssh-keys-on-ubuntu-20-04-ru
