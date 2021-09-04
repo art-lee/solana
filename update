@@ -1,0 +1,20 @@
+1. Проверяем версию
+solana-install init v1.7.10
+
+2. Перезагружаем тюнер + сервис
+systemctl restart solana-sys-tuner.service
+systemctl restart solana.service
+
+Обновление без потери блока
+
+3. Проверяем текущий блок
+solana slot
+
+4. Смотрим свои блоки и обновляем в окно
+solana leader-schedule | grep GZA4 | grep 9
+
+4.1. Проверка окна
+solana-validator --ledger ~/solana/ledger/ wait-for-restart-window
+
+5. Кечап
+solana catchup ~/solana/validator-keypair.json --our-localhost
