@@ -1,0 +1,34 @@
+1. Обновляем пакеты
+apt-get update
+
+2. Устанавливаем утилиту
+sudo apt-get -y install libssl-dev libudev-dev pkg-config zlib1g-dev llvm clang make
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+2.1. Жмем цифру 1 и enter
+
+3. Устанавливаем утилиту
+source $HOME/.cargo/env
+cargo install solana-foundation-delegation-program-cli
+
+3.1. Проверяем версию
+solana-foundation-delegation-program --version
+
+4. Создаем новый ключ:
+solana-keygen new -o mainnet-validator-keypair.json
+4.1. Или восстанавливаем:
+solana-keygen recover -o ~/solana/mainnet-validator-keypair.json
+
+5. На адрес testnet-validator-keypair.json отправляем минимум 0.002 sol
+
+6. Связываем ключи (сверяем имена файлов и путь)
+solana-foundation-delegation-program apply --mainnet ~/solana/mainnet-validator-keypair.json --testnet ~/solana/validator-keypair.json  --confirm
+
+6.1. Если все прошло успешно вы увидите строки с вашими ключами и строку связки
+Mainnet Validator Identity: Y6QMPrYtZLsKTuT8mtYBD9pj1h3wrqUhJKCFDv1L26NR
+Testnet Validator Identity: E1bcuniYQhDscfDjE4zaAXQ51TH77gsQoRuzvqXHxnDf
+6txERiviWdXG6BeyRQD3b4RN1v3LZd94khK4vxEz2TNeYSzoLmkDNsMKdkC6rVEwUe5kCUbS8tGmYq2vZa4fTJi
+
+=======
+офф инструкция: https://github.com/solana-labs/stake-o-matic/blob/master/cli/README.md
+патч к офф инструкции: https://github.com/solana-labs/stake-o-matic/issues/152
+не офф: https://github.com/NEONIK690/Solana-Foundation-Delegation-Program-Command-line-Utility/commit/7a1223654c227ca9d9dc932fca325154acdd93d7
