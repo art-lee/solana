@@ -33,6 +33,9 @@ sudo smartctl -a /dev/nvme0n1
 5. Проверить стейк на акк
 solana stakes ~/solana/vote-account-keypair.json
 
+6. Назначенные слоты
+solana leader-schedule | grep GZA4 | grep 9
+
 6. % скипа (подробно)
 solana -v block-production | grep GZA4y
 solana -v block-production | grep 6U6be
