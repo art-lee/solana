@@ -1,51 +1,60 @@
-Хорошая инструкция и команды: 1
-https://docs.google.com/document/d/1RZ-33RpapUGzge1rHWNyBx8GBIihZ3CzpJ0hJjnXrZU/mobilebasic
-
-1. Вывод с vote-account-keypair.json на validator-keypair.json
-solana withdraw-from-vote-account -u testnet ~/solana/vote-account-keypair.json ~/solana/validator-keypair.json 11 --authorized-withdrawer ~/solana/vote-account-keypair.json
-
-2. Вывод с vote-account-keypair.json на конкретный адрес
-solana -ut withdraw-from-vote-account -u testnet ~/solana/vote-account-keypair.json 6U6befpkTqT1gV18TaM3Lzuai3XQypHcAamK463DYXm4 250
-
-3. Создаем ключ validator-stake-keypair.json
-solana-keygen new -o ~/solana/validator-stake-keypair.json
-
-4. Создаем стейк-аккаунт
-solana create-stake-account ~/solana/validator-stake-keypair.json 17
-
-5. Делегировать на vote-account-keypair
-solana delegate-stake ~/solana/validator-stake-keypair.json ~/solana/vote-account-keypair.json
-
-
-
-===
-
-2. Проверка оборудования - диски
-curl -sL yabs.sh | bash -s --  -ig
-
-3. Проверка оборудования - сеть
-curl -sL yabs.sh | bash -s --  -dg
-
-4. Проверка mvne дисков
-apt install smartmontools
-sudo smartctl -a /dev/nvme0n1
-
-5. Проверить стейк на акк
-solana stakes ~/solana/vote-account-keypair.json
-
-6. Назначенные слоты
+Validator skip
+1. № запланированных слотов
+solana leader-schedule | grep GZA4y | wc -l
+solana leader-schedule | grep 6U6be | wc -l
+2. Список назначенных слотов
 solana leader-schedule | grep GZA4 | grep 9
-
-6. % скипа (подробно)
+solana leader-schedule | grep 6U6be | grep 9
+3. % скипа (кратко)
+solana block-production | grep GZA4y
+solana block-production | grep 6U6be
+4. % скипа (подробно)
 solana -v block-production | grep GZA4y
 solana -v block-production | grep 6U6be
 
-% скипа (кратко)
-solana block-production | grep GZA4y
-solana block-production | grep 6U6be
-
-Реварды 10 эпох:
+Кошелек
+0. Вывод с Ledger
+solana withdraw-from-vote-account --authorized-withdrawer usb://ledger?key=0 <vote_pubkey> <адрес получателя> ALL
+1. Вывод с vote-account-keypair.json на validator-keypair.json
+solana withdraw-from-vote-account -u testnet ~/solana/vote-account-keypair.json ~/solana/validator-keypair.json 11 --authorized-withdrawer ~/solana/vote-account-keypair.json
+2. Вывод с vote-account-keypair.json на конкретный адрес
+solana -ut withdraw-from-vote-account -u testnet ~/solana/vote-account-keypair.json 6U6befpkTqT1gV18TaM3Lzuai3XQypHcAamK463DYXm4 250
+3. Проверка ревардов:
 solana vote-account -u testnet ~/solana/vote-account-keypair.json --with-rewards --num-rewards-epochs 10
 
-% комиссии валидатора
+Стейкинг
+1. Создаем ключ validator-stake-keypair.json
+solana-keygen new -o ~/solana/validator-stake-keypair.json
+2. Создаем стейк-аккаунт
+solana create-stake-account ~/solana/validator-stake-keypair.json 17
+3. Делегировать на vote-account-keypair
+solana delegate-stake ~/solana/validator-stake-keypair.json ~/solana/vote-account-keypair.json
+4. Проверить стейк на акк
+solana stakes ~/solana/vote-account-keypair.json
+
+Смена Authorized Withdrawer
+1. Ставим Authorized Withdrawer с validator-keypair.json на Ledger
+- vote-authorize-withdrawer ~/solana/vote-account-keypair.json ~/solana/validator-keypair.json [тут usb ledger]
+- vote-authorize-withdrawer ~/solana/vote-account-keypair.json usb://ledger?key=0 [ledger...]
+2. Ставим Authorized Withdrawer с Ledger на validator-keypair.json
+- vote-authorize-withdrawer ~/solana/vote-account-keypair.json [тут usb ledger] ~/solana/validator-keypair.json
+- vote-authorize-withdrawer ~/solana/vote-account-keypair.json ~/solana/validator-keypair.json
+
+Проверка сервера
+1. Проверка оборудования - диски
+curl -sL yabs.sh | bash -s --  -ig
+2. Проверка оборудования - сеть
+curl -sL yabs.sh | bash -s --  -dg
+3. Проверка mvne дисков
+apt install smartmontools
+sudo smartctl -a /dev/nvme0n1
+
+Прочее:
+1. % комиссии валидатора
 solana vote-update-commission vote-account-keypair.json 99 validator-keypair.json
+
+
+
+==
+Хорошая инструкция и команды: 1
+https://docs.google.com/document/d/1RZ-33RpapUGzge1rHWNyBx8GBIihZ3CzpJ0hJjnXrZU/mobilebasic
