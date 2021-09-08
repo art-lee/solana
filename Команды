@@ -52,7 +52,8 @@ sudo smartctl -a /dev/nvme0n1
 Прочее:
 1. % комиссии валидатора
 solana vote-update-commission vote-account-keypair.json 99 validator-keypair.json
-
+2.Восстановление json
+solana-keygen recover -o ~/solana/name1.json
 
 
 ==
