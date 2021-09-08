@@ -34,11 +34,9 @@ solana stakes ~/solana/vote-account-keypair.json
 
 Смена Authorized Withdrawer
 1. Ставим Authorized Withdrawer с validator-keypair.json на Ledger
-- vote-authorize-withdrawer ~/solana/vote-account-keypair.json ~/solana/validator-keypair.json [тут usb ledger]
-- vote-authorize-withdrawer ~/solana/vote-account-keypair.json usb://ledger?key=0 [ledger...]
+solana vote-authorize-withdrawer ~/solana/vote-account-keypair.json ~/solana/validator-keypair.json usb://ledger
 2. Ставим Authorized Withdrawer с Ledger на validator-keypair.json
-- vote-authorize-withdrawer ~/solana/vote-account-keypair.json [тут usb ledger] ~/solana/validator-keypair.json
-- vote-authorize-withdrawer ~/solana/vote-account-keypair.json ~/solana/validator-keypair.json
+solana vote-authorize-withdrawer ~/solana/vote-account-keypair.json usb://ledger ~/solana/validator-keypair.json
 
 Проверка сервера
 1. Проверка оборудования - диски
