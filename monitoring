@@ -111,7 +111,7 @@ export VALIDATOR_NAME="art0055" # Your validator name
 export PUB_KEY="GZA4y8zY8SZe85tDGb8dhXqyuEvdkdatBF3ivoce2sir"  # Ex - export PUB_KEY="valmmK7i1AxXeiTtQgQZhQNiXYU84ULeaYF1EH1pa"
 export VOTE_KEY="B1EmoN7nfcq4Mm8hEwyfLahbADUszieb2ctj6MisB21f" # Ex - export VOTE_KEY="2oxQJ1qpgUZU9JU84BHaoM1GzHkYfRDgDQY9dpH5mghh"
 export TELEGRAM_CHAT_ID=3593697 # Ex - export TELEGRAM_CHAT_ID=22128812
-export TELEGRAM_BOT_TOKEN="1995464693:AAFO5tk3YG4r1G_mM5UdBHJ-Xc3nnMEVpvg" # Ex - TELEGRAM_BOT_TOKEN="1117273891:AAE12xZU5x4JRj5YSF5LBeu1fPF0T4xj-UI"
+export TELEGRAM_BOT_TOKEN="1907900597:AAGgZJ-SVmjDXOCg7lAZ_iTsBj1H4fj0SJk" # Ex - TELEGRAM_BOT_TOKEN="1117273891:AAE12xZU5x4JRj5YSF5LBeu1fPF0T4xj-UI"
 
 38.
 curl -s -L https://raw.githubusercontent.com/Chainflow/solana-mission-control/main/scripts/tool_installation.sh | bash
