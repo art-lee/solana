@@ -1,36 +1,103 @@
-23. Мониторинг metrics.stakeconomy.com
+1. Мониторинг 2 (solana-mission-control)
+ссылки:
+https://github.com/Chainflow/solana-mission-control
+https://chainflow.io/introducing-solana-mission-control/
 
-24. Пишем сервис
+2. Запускаем скрипт
+curl -s -L https://raw.githubusercontent.com/Chainflow/solana-mission-control/main/scripts/install_script.sh | bash
+
+3. Даем права
+source ~/.bashrc
+
+
+4. Экспортируем переменные (заменить значения)
+cd $HOME
+export RPC_ENDPOINT="https://api.testnet.solana.com" # Ex - export RPC_ENDPOINT="https://api.rpc.solana.com"
+export NETWORK_RPC="http://localhost:8899" # Ex - export NETWORK_RPC="https://api.rpc.com"
+export VALIDATOR_NAME="art0055" # Your validator name
+export PUB_KEY="GZA4y8zY8SZe85tDGb8dhXqyuEvdkdatBF3ivoce2sir"  # Ex - export PUB_KEY="valmmK7i1AxXeiTtQgQZhQNiXYU84ULeaYF1EH1pa"
+export VOTE_KEY="B1EmoN7nfcq4Mm8hEwyfLahbADUszieb2ctj6MisB21f" # Ex - export VOTE_KEY="2oxQJ1qpgUZU9JU84BHaoM1GzHkYfRDgDQY9dpH5mghh"
+export TELEGRAM_CHAT_ID=3593697 # Ex - export TELEGRAM_CHAT_ID=22128812
+export TELEGRAM_BOT_TOKEN="1907900597:AAGgZJ-SVmjDXOCg7lAZ_iTsBj1H4fj0SJk" # Ex - TELEGRAM_BOT_TOKEN="1117273891:AAE12xZU5x4JRj5YSF5LBeu1fPF0T4xj-UI"
+
+4.1. Редактируем переменные (если нужно)
+cd .solana-mc/config/
+nano config.toml 
+4.2. Удаляем solana-mission-control
+rm -r solana-mission-control/
+
+5. Запускаем скрипт
+curl -s -L https://raw.githubusercontent.com/Chainflow/solana-mission-control/main/scripts/tool_installation.sh | bash
+
+6.1. Проверка статусов
+sudo systemctl status grafana-server
+sudo systemctl status prometheus.service
+sudo systemctl status node_exporter.service
+
+6.2. Перезагрузка сервисов
+systemctl daemon-reload
+sudo systemctl restart grafana-server
+sudo systemctl restart prometheus.service
+sudo systemctl restart node_exporter.service
+
+6.3. Остановка сервисов
+sudo systemctl daemon-reload
+sudo systemctl stop grafana-server
+sudo systemctl stop prometheus.service
+sudo systemctl stop node_exporter.service
+
+7. Заходим в grafana
+http://<your_ip>:3000
+admin
+admin
+
+41. Добавить datasources
+- Configuration and select Data Sources
+- Click on Add data source and select Prometheus.
+- Replace the URL with http://localhost:9090.
+- Click on Save & Test .
+
+42. Добавляем мониторы
+- + затем Import
+- 14738 - Validator monitoring metrics dashboard.
+- 14739 - Summary dashboard.
+- 13445 - System monitoring metrics dashboard.
+
+===
+
+
+Мониторинг metrics.stakeconomy.com
+
+1. Пишем сервис
 cat <<EOF | sudo tee /etc/apt/sources.list.d/influxdata.list
 deb https://repos.influxdata.com/ubuntu bionic stable
 EOF
 
-25. Добавляем ключ
+2. Добавляем ключ
 sudo curl -sL https://repos.influxdata.com/influxdb.key | sudo apt-key add -
 
-26. Устанавливаем telegraf 
+3. Устанавливаем telegraf 
 sudo apt-get update
 sudo apt-get -y install telegraf jq bc
 
-27. Добавляем пользователя и права ему
+4. Добавляем пользователя и права ему
 sudo adduser telegraf sudo
 sudo adduser telegraf adm
 sudo -- bash -c 'echo "telegraf ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers'
 
-28.
+5. Делаем копию и удаляем
 sudo cp /etc/telegraf/telegraf.conf /etc/telegraf/telegraf.conf.orig
 sudo rm -rf /etc/telegraf/telegraf.conf
 
-29. 
+6. 
 git clone https://github.com/stakeconomy/solanamonitoring/
 cd solanamonitoring
 chmod +x monitor.sh
 
-30. Редактируем конфиг
+7. Редактируем конфиг
 nano /etc/telegraf/telegraf.conf
 
-31. 
-#Поменять hostname 
+8. #Поменять hostname, путь и пользователя
 
 # Global Agent Configuration
 [agent]
@@ -70,68 +137,10 @@ nano /etc/telegraf/telegraf.conf
   data_format = "influx"
   data_type = "integer"
 
-32. Стартуем мониторинг
+9. Стартуем мониторинг
 sudo systemctl enable --now telegraf
 sudo systemctl is-enabled telegraf
 systemctl restart telegraf
 systemctl status telegraf
 
-33. Мониторинг 2 (solana-mission-control)
-ссылки:
-https://github.com/Chainflow/solana-mission-control
-https://chainflow.io/introducing-solana-mission-control/
 
-34.
-curl -s -L https://raw.githubusercontent.com/Chainflow/solana-mission-control/main/scripts/install_script.sh | bash
-
-35. 
-source ~/.bashrc
-
-36. не получается прописать символические ссылки
-
-symlink /etc/systemd/system/multi-user.target.wants/prometheus.service → /lib/systemd/system/prometheus.service
-symlink /etc/systemd/system/multi-user.target.wants/node_exporter.service → /lib/systemd/system/node_exporter.service
-
-systemctl stop node_exporter
-systemctl stop prometheus
-
-ln -s /etc/systemd/system/multi-user.target.wants/prometheus.service /lib/systemd/system/prometheus.service
-ln -s /etc/systemd/system/multi-user.target.wants/node_exporter.service /lib/systemd/system/node_exporter.service
-
-systemctl restart node_exporter
-systemctl restart prometheus
-
-37. Экспортируем переменные
-
-cd $HOME
-#заменить все значения (см в solana.service):
-export RPC_ENDPOINT="https://api.testnet.solana.com" # Ex - export RPC_ENDPOINT="https://api.rpc.solana.com"
-export NETWORK_RPC="http://localhost:8899" # Ex - export NETWORK_RPC="https://api.rpc.com"
-export VALIDATOR_NAME="art0055" # Your validator name
-export PUB_KEY="GZA4y8zY8SZe85tDGb8dhXqyuEvdkdatBF3ivoce2sir"  # Ex - export PUB_KEY="valmmK7i1AxXeiTtQgQZhQNiXYU84ULeaYF1EH1pa"
-export VOTE_KEY="B1EmoN7nfcq4Mm8hEwyfLahbADUszieb2ctj6MisB21f" # Ex - export VOTE_KEY="2oxQJ1qpgUZU9JU84BHaoM1GzHkYfRDgDQY9dpH5mghh"
-export TELEGRAM_CHAT_ID=3593697 # Ex - export TELEGRAM_CHAT_ID=22128812
-export TELEGRAM_BOT_TOKEN="1907900597:AAGgZJ-SVmjDXOCg7lAZ_iTsBj1H4fj0SJk" # Ex - TELEGRAM_BOT_TOKEN="1117273891:AAE12xZU5x4JRj5YSF5LBeu1fPF0T4xj-UI"
-
-38.
-curl -s -L https://raw.githubusercontent.com/Chainflow/solana-mission-control/main/scripts/tool_installation.sh | bash
-
-39. смотрим логи
-journalctl -u solana_mc.service
-
-40. Заходим в grafana
-http://<your_ip>:3000
-admin
-admin
-
-41. Добавить datasources
-- Configuration and select Data Sources
-- Click on Add data source and select Prometheus.
-- Replace the URL with http://localhost:9090.
-- Click on Save & Test .
-
-42. Добавляем мониторы
-- + затем Import
-- 14738 - Validator monitoring metrics dashboard.
-- 14739 - Summary dashboard.
-- 13445 - System monitoring metrics dashboard.
