@@ -2,6 +2,7 @@
 solana-install init v1.7.10
 
 2. Перезагружаем тюнер + сервис
+systemctl daemon-reload
 systemctl restart solana-sys-tuner.service
 systemctl restart solana.service
 
