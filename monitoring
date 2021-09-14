@@ -3,48 +3,47 @@
 https://github.com/Chainflow/solana-mission-control
 https://chainflow.io/introducing-solana-mission-control/
 
-2. Запускаем скрипт
+2. Запускаем скрипт (grafana, prometheus, node_exporter)
 curl -s -L https://raw.githubusercontent.com/Chainflow/solana-mission-control/main/scripts/install_script.sh | bash
 
 3. Даем права
 source ~/.bashrc
 
 
-4. Экспортируем переменные (заменить значения)
+4. Экспортируем переменные (заменить значения). В случае добавления новых переменных отредактировать: 
+https://github.com/art-lee/solana/blob/main/monitoring-solana-mission-control
+
 cd $HOME
 export RPC_ENDPOINT="https://api.testnet.solana.com" # Ex - export RPC_ENDPOINT="https://api.rpc.solana.com"
 export NETWORK_RPC="http://localhost:8899" # Ex - export NETWORK_RPC="https://api.rpc.com"
-export VALIDATOR_NAME="art0055" # Your validator name
-export PUB_KEY="GZA4y8zY8SZe85tDGb8dhXqyuEvdkdatBF3ivoce2sir"  # Ex - export PUB_KEY="valmmK7i1AxXeiTtQgQZhQNiXYU84ULeaYF1EH1pa"
-export VOTE_KEY="B1EmoN7nfcq4Mm8hEwyfLahbADUszieb2ctj6MisB21f" # Ex - export VOTE_KEY="2oxQJ1qpgUZU9JU84BHaoM1GzHkYfRDgDQY9dpH5mghh"
-export TELEGRAM_CHAT_ID=3593697 # Ex - export TELEGRAM_CHAT_ID=22128812
-export TELEGRAM_BOT_TOKEN="1907900597:AAGgZJ-SVmjDXOCg7lAZ_iTsBj1H4fj0SJk" # Ex - TELEGRAM_BOT_TOKEN="1117273891:AAE12xZU5x4JRj5YSF5LBeu1fPF0T4xj-UI"
-
-4.1. Редактируем переменные (если нужно)
-cd .solana-mc/config/
-nano config.toml 
-4.2. Удаляем solana-mission-control
-rm -r solana-mission-control/
+export VALIDATOR_NAME="art-test"
+export PUB_KEY="GZA4y8zY8SZe85tDGb8dhXqyuEvdkdatBF3ivoce2sir"
+export VOTE_KEY="B1EmoN7nfcq4Mm8hEwyfLahbADUszieb2ctj6MisB21f"
+export TELEGRAM_CHAT_ID=359
+export TELEGRAM_BOT_TOKEN="1902345197:AAGgZJ-SVmjDXOCg7lAZ_iTsBj1H4fj0SJk"
+export BALANCE_CHANGE_THRESHOLD="30.123"
 
 5. Запускаем скрипт
-curl -s -L https://raw.githubusercontent.com/Chainflow/solana-mission-control/main/scripts/tool_installation.sh | bash
+curl -s -L https://raw.githubusercontent.com/art-lee/solana/main/monitoring-solana-mission-control | bash
 
 6.1. Проверка статусов
 sudo systemctl status grafana-server
 sudo systemctl status prometheus.service
 sudo systemctl status node_exporter.service
+sudo systemctl status solana_mc.service
 
 6.2. Перезагрузка сервисов
 systemctl daemon-reload
 sudo systemctl restart grafana-server
 sudo systemctl restart prometheus.service
 sudo systemctl restart node_exporter.service
+sudo systemctl restart solana_mc.service
 
 6.3. Остановка сервисов
-sudo systemctl daemon-reload
 sudo systemctl stop grafana-server
 sudo systemctl stop prometheus.service
 sudo systemctl stop node_exporter.service
+sudo systemctl stop solana_mc.service
 
 7. Заходим в grafana
 http://<your_ip>:3000
