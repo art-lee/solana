@@ -9,7 +9,6 @@ curl -s -L https://raw.githubusercontent.com/Chainflow/solana-mission-control/ma
 3. Даем права
 source ~/.bashrc
 
-
 4. Экспортируем переменные (заменить значения). В случае добавления новых переменных отредактировать: 
 https://github.com/art-lee/solana/blob/main/monitoring-solana-mission-control
 
@@ -25,6 +24,27 @@ export BALANCE_CHANGE_THRESHOLD="30.123"
 
 5. Запускаем скрипт
 curl -s -L https://raw.githubusercontent.com/art-lee/solana/main/monitoring-solana-mission-control | bash
+
+5.1. Если solana-mission-control уже установлен
+cd $HOME
+echo "------ Updatig config fields with exported values -------"
+sed -i '/balance_change_threshold =/c\balance_change_threshold = "'"$BALANCE_CHANGE_THRESHOLD"'"' ~/.solana-mc/config/config.toml
+sed -i '/rpc_endpoint =/c\rpc_endpoint = "'"$RPC_ENDPOINT"'"' ~/.solana-mc/config/config.toml
+sed -i '/network_rpc =/c\network_rpc = "'"$NETWORK_RPC"'"' ~/.solana-mc/config/config.toml
+sed -i '/validator_name =/c\validator_name = "'"$VALIDATOR_NAME"'"'  ~/.solana-mc/config/config.toml
+sed -i '/pub_key =/c\pub_key = "'"$PUB_KEY"'"'  ~/.solana-mc/config/config.toml
+sed -i '/vote_key =/c\vote_key = "'"$VOTE_KEY"'"'  ~/.solana-mc/config/config.toml
+if [ ! -z "${TELEGRAM_CHAT_ID}" ] && [ ! -z "${TELEGRAM_BOT_TOKEN}" ];
+then 
+    sed -i '/tg_chat_id =/c\tg_chat_id = '"$TELEGRAM_CHAT_ID"''  ~/.solana-mc/config/config.toml
+    sed -i '/tg_bot_token =/c\tg_bot_token = "'"$TELEGRAM_BOT_TOKEN"'"'  ~/.solana-mc/config/config.toml
+    sed -i '/enable_telegram_alerts =/c\enable_telegram_alerts = 'true''  ~/.solana-mc/config/config.toml
+else
+    echo "---- Telgram chat id and/or bot token are empty --------"
+fi
+
+5.2. Рестарт сервиса
+sudo systemctl restart solana_mc.service
 
 6.1. Проверка статусов
 sudo systemctl status grafana-server
@@ -50,13 +70,13 @@ http://<your_ip>:3000
 admin
 admin
 
-41. Добавить datasources
+8. Добавить datasources
 - Configuration and select Data Sources
 - Click on Add data source and select Prometheus.
 - Replace the URL with http://localhost:9090.
 - Click on Save & Test .
 
-42. Добавляем мониторы
+9. Добавляем мониторы
 - + затем Import
 - 14738 - Validator monitoring metrics dashboard.
 - 14739 - Summary dashboard.
