@@ -81,6 +81,12 @@ fi
 5.2. Рестарт сервиса
 sudo systemctl restart solana_mc.service
 
+6.0.
+sudo systemctl enable grafana-server
+sudo systemctl enable prometheus.service
+sudo systemctl enable node_exporter.service
+sudo systemctl enable solana_mc.service
+
 6.1. Проверка статусов
 sudo systemctl status grafana-server
 sudo systemctl status prometheus.service
