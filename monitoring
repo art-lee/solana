@@ -13,32 +13,67 @@ source ~/.bashrc
 https://github.com/art-lee/solana/blob/main/monitoring-solana-mission-control
 
 cd $HOME
-export RPC_ENDPOINT="https://api.testnet.solana.com" # Ex - export RPC_ENDPOINT="https://api.rpc.solana.com"
-export NETWORK_RPC="http://localhost:8899" # Ex - export NETWORK_RPC="https://api.rpc.com"
+export RPC_ENDPOINT="https://api.testnet.solana.com"
+export NETWORK_RPC="http://localhost:8899"
+
 export VALIDATOR_NAME="art-test"
 export PUB_KEY="GZA4y8zY8SZe85tDGb8dhXqyuEvdkdatBF3ivoce2sir"
 export VOTE_KEY="B1EmoN7nfcq4Mm8hEwyfLahbADUszieb2ctj6MisB21f"
-export TELEGRAM_CHAT_ID=359
-export TELEGRAM_BOT_TOKEN="1902345197:AAGgZJ-SVmjDXOCg7lAZ_iTsBj1H4fj0SJk"
-export BALANCE_CHANGE_THRESHOLD="30.123"
+
+export ENABLE_TELEGRAM_ALERTS="true"
+export ENABLE_EMAIL_ALERTS="FALSE"
+
+export DELEGATION_ALERTS="YES"
+export BLOCK_DIFF_ALERTS="YES"
+export NODE_HEALTH_ALERT="YES"
+export EPOCH_DIFF_ALRETS="YES"
+export ACCOUNT_BALANCE_CHANGE_ALERTS="YES"
+export SKIP_RATE_ALERTS="YES"
+
+export BLOCK_DIFF_THRESHOLD="10"
+export BALANCE_CHANGE_THRESHOLD="55.123"
+export EPOCH_DIFF_THRESHOLD="0"
+export SKIP_RATE_THRESHOLD="50"
+
+export TELEGRAM_CHAT_ID=000000
+export TELEGRAM_BOT_TOKEN="1802645377:AAGgZJ-SVmjD456Cg7lAZ_iTsBj123j0SJk"
+
+export LISTEN_ADDRESS=":1234"
+export PROMETHEUS_ADDRESS="HTTP://LOCALHOST:9090"
+
 
 5. Запускаем скрипт
 curl -s -L https://raw.githubusercontent.com/art-lee/solana/main/monitoring-solana-mission-control | bash
 
 5.1. Если solana-mission-control уже установлен
 cd $HOME
-echo "------ Updatig config fields with exported values -------"
-sed -i '/balance_change_threshold =/c\balance_change_threshold = "'"$BALANCE_CHANGE_THRESHOLD"'"' ~/.solana-mc/config/config.toml
 sed -i '/rpc_endpoint =/c\rpc_endpoint = "'"$RPC_ENDPOINT"'"' ~/.solana-mc/config/config.toml
 sed -i '/network_rpc =/c\network_rpc = "'"$NETWORK_RPC"'"' ~/.solana-mc/config/config.toml
+
 sed -i '/validator_name =/c\validator_name = "'"$VALIDATOR_NAME"'"'  ~/.solana-mc/config/config.toml
 sed -i '/pub_key =/c\pub_key = "'"$PUB_KEY"'"'  ~/.solana-mc/config/config.toml
 sed -i '/vote_key =/c\vote_key = "'"$VOTE_KEY"'"'  ~/.solana-mc/config/config.toml
+
+sed -i '/enable_telegram_alerts =/c\enable_telegram_alerts = "'"$ENABLE_TELEGRAM_ALERTS"'"'  ~/.solana-mc/config/config.toml
+sed -i '/enable_email_alerts =/c\enable_email_alerts = "'"$ENABLE_EMAIL_ALERTS"'"'  ~/.solana-mc/config/config.toml
+
+sed -i '/delegation_alerts =/c\delegation_alerts = "'"$DELEGATION_ALERTS"'"'  ~/.solana-mc/config/config.toml
+sed -i '/block_diff_alerts =/c\block_diff_alerts = "'"$BLOCK_DIFF_ALERTS"'"'  ~/.solana-mc/config/config.toml
+sed -i '/node_health_alert =/c\node_health_alert = "'"$NODE_HEALTH_ALERT"'"'  ~/.solana-mc/config/config.toml
+sed -i '/epoch_diff_alrets =/c\epoch_diff_alrets = "'"$EPOCH_DIFF_ALRETS"'"'  ~/.solana-mc/config/config.toml
+sed -i '/account_balance_change_alerts =/c\account_balance_change_alerts = "'"$ACCOUNT_BALANCE_CHANGE_ALERTS"'"'  ~/.solana-mc/config/config.toml
+sed -i '/skip_rate_alerts =/c\skip_rate_alerts = "'"$SKIP_RATE_ALERTS"'"'  ~/.solana-mc/config/config.toml
+
+sed -i '/block_diff_threshold =/c\block_diff_threshold = "'"$BLOCK_DIFF_THRESHOLD"'"'  ~/.solana-mc/config/config.toml
+sed -i '/balance_change_threshold =/c\balance_change_threshold = "'"$BALANCE_CHANGE_THRESHOLD"'"'  ~/.solana-mc/config/config.toml
+sed -i '/epoch_diff_threshold =/c\epoch_diff_threshold = "'"$EPOCH_DIFF_THRESHOLD"'"'  ~/.solana-mc/config/config.toml
+sed -i '/skip_rate_threshold =/c\skip_rate_threshold = "'"$SKIP_RATE_THRESHOLD"'"'  ~/.solana-mc/config/config.toml
+
+
 if [ ! -z "${TELEGRAM_CHAT_ID}" ] && [ ! -z "${TELEGRAM_BOT_TOKEN}" ];
 then 
     sed -i '/tg_chat_id =/c\tg_chat_id = '"$TELEGRAM_CHAT_ID"''  ~/.solana-mc/config/config.toml
     sed -i '/tg_bot_token =/c\tg_bot_token = "'"$TELEGRAM_BOT_TOKEN"'"'  ~/.solana-mc/config/config.toml
-    sed -i '/enable_telegram_alerts =/c\enable_telegram_alerts = 'true''  ~/.solana-mc/config/config.toml
 else
     echo "---- Telgram chat id and/or bot token are empty --------"
 fi
