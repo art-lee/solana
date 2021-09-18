@@ -1,5 +1,5 @@
 1. Проверяем версию
-solana-install init v1.7.10
+solana-install init v1.7.----
 
 2. Перезагружаем тюнер + сервис
 systemctl daemon-reload
@@ -13,6 +13,7 @@ solana slot
 
 4. Смотрим свои блоки и обновляем в окно
 solana leader-schedule | grep GZA4 | grep 9
+solana leader-schedule | grep 6U6be | grep 9
 
 4.1. Проверка окна
 solana-validator --ledger ~/solana/ledger/ wait-for-restart-window
