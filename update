@@ -20,3 +20,6 @@ solana-validator --ledger ~/solana/ledger/ wait-for-restart-window
 
 5. Кечап
 solana catchup ~/solana/validator-keypair.json --our-localhost
+
+5.1. Кечап с логами
+solana catchup ~/solana/validator-keypair.json --our-localhost --follow --log
