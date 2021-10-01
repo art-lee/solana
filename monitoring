@@ -127,6 +127,7 @@ admin
 
 
 Мониторинг metrics.stakeconomy.com
+https://github.com/stakeconomy/solanamonitoring
 
 1. Пишем сервис
 cat <<EOF | sudo tee /etc/apt/sources.list.d/influxdata.list
