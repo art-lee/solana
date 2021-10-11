@@ -1,16 +1,20 @@
 Validator skip
 1. № запланированных слотов
-solana leader-schedule | grep GZA4y | wc -l
-solana leader-schedule | grep 6U6be | wc -l
+solana leader-schedule | grep 2sir | wc -l
+solana leader-schedule | grep YXm4 | wc -l
 2. Список назначенных слотов
-solana leader-schedule | grep GZA4 | grep 9
-solana leader-schedule | grep 6U6be | grep 9
+solana leader-schedule | grep 2sir | grep 9
+solana leader-schedule | grep YXm4 | grep 9
 3. % скипа (кратко)
-solana block-production | grep GZA4y
-solana block-production | grep 6U6be
+solana block-production | grep 2sir
+solana block-production | grep YXm4
 4. % скипа (подробно)
-solana -v block-production | grep GZA4y
-solana -v block-production | grep 6U6be
+solana -v block-production | grep 2sir
+solana -v block-production | grep YXm4
+
+1. Кредиты
+solana validators -ul --sort=credits -r -n | grep 2sir
+solana validators -ul --sort=credits -r -n | grep YXm4
 
 Кошелек
 0. Вывод с Ledger
