@@ -17,8 +17,8 @@ solana validators -ul --sort=credits -r -n | grep 2sir &&
 solana validators -ul --sort=credits -r -n | grep YXm4
 
 Кошелек
-0. Вывод с Ledger
-solana withdraw-from-vote-account --authorized-withdrawer usb://ledger?key=0 <vote_pubkey> <адрес получателя> ALL
+0. Вывод с Ledger (win)
+solana withdraw-from-vote-account -u testnet --authorized-withdrawer usb://ledger?key=0 <vote_pubkey> <адрес получателя> ALL
 1. Вывод с vote-account-keypair.json на validator-keypair.json
 solana withdraw-from-vote-account -u testnet ~/solana/vote-account-keypair.json ~/solana/validator-keypair.json 11 --authorized-withdrawer ~/solana/vote-account-keypair.json
 2. Вывод с vote-account-keypair.json на конкретный адрес
