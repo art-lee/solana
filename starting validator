@@ -175,3 +175,9 @@ nano solana.service
 systemctl daemon-reload
 systemctl restart solana-sys-tuner.service
 systemctl restart solana.service
+
+24. Кечап
+solana catchup ~/solana/validator-keypair.json --our-localhost
+
+24.1. Кечап с логами
+solana catchup ~/solana/validator-keypair.json --our-localhost --follow --log
