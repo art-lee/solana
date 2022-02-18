@@ -155,10 +155,8 @@ swapon /swapfile
 19. Редактируем
 nano /etc/fstab
 
-Добавляем
-/swapfile none swap sw 0 0
-
 Сохраняем. Добавляем
+/swapfile none swap sw 0 0
 tmpfs /mnt/ramdisk tmpfs nodev,nosuid,noexec,nodiratime,size=200G 0 0
 
 20. Создаем папку
@@ -171,6 +169,12 @@ mount /mnt/ramdisk
 nano solana.service
 Добавляем:
 --accounts /mnt/ramdisk/accounts
+
+Проверяем
+df -h
+df -h | grep ramdisk
+Проверяем папку accounts
+ll /mnt/ramdisk/ 
 
 23. Перегружаем демона
 systemctl daemon-reload
