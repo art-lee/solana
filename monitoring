@@ -204,4 +204,4 @@ sudo systemctl is-enabled telegraf
 systemctl restart telegraf
 systemctl status telegraf
 
-
+10.
